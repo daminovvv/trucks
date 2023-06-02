@@ -11,7 +11,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     container_name: db
     networks:
       - mynetwork
@@ -23,6 +23,9 @@ services:
       - .:/code
     ports:
       - 8000:8000
+    environment:
+      - DB_HOST=db
+      - DB_PORT=${POSTGRES_PORT}
     depends_on:
       - db
     links:
