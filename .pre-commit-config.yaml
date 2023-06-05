@@ -12,7 +12,8 @@ repos:
                 trucksapp/views.py|
                 trucksapp/serializers.py|
                 trucksapp/services.py|
-                trucksapp/utils/distance_calc.py
+                trucksapp/utils/distance_calc.py|
+                trucks/urls.py
             )$
 
 -   repo: https://github.com/pre-commit/pre-commit-hooks
