@@ -9,6 +9,7 @@ WORKDIR /code
 
 COPY requirements.txt /code/
 COPY django.sh /code/
+RUN chmod +x django.sh
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /code/
