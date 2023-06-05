@@ -1,13 +1,9 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from rest_framework import mixins, viewsets, status
-from rest_framework.response import Response
+from rest_framework import mixins, viewsets
 
-from trucksapp.models import Cargo, Car
-from trucksapp.serializers import CargoSerializer, CarSerializer, CargoPostSerializer, \
-    CarPatchSerializer, CarChildSerializer, CargoPatchSerializer
-from trucksapp.services import load_csv, create_cars
-from trucksapp.utils.distance_calc import calculate_distance
+from trucksapp.models import Car, Cargo
+from trucksapp.serializers import (CargoPatchSerializer, CargoPostSerializer,
+                                   CargoSerializer, CarPatchSerializer,
+                                   CarSerializer)
 
 
 class CargoViewSet(
@@ -19,15 +15,16 @@ class CargoViewSet(
     viewsets.GenericViewSet,
 ):
     """Allows to work with cargo"""
+
     queryset = Cargo.objects.all()
-    lookup_field = 'id'
+    lookup_field = "id"
 
     serializer_classes = {
         "list": CargoSerializer,
         "retrieve": CargoSerializer,
         "destroy": CargoSerializer,
         "create": CargoPostSerializer,
-        "update": CargoPatchSerializer
+        "update": CargoPatchSerializer,
     }
 
     def get_serializer_class(self):
@@ -43,17 +40,10 @@ class CarViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = Car.objects.all()
-    lookup_field = 'id'
+    lookup_field = "id"
     serializer_class = CarSerializer
 
     def get_serializer_class(self):
-        if self.action == 'update':
+        if self.action == "update":
             return CarPatchSerializer
         return CarSerializer
-
-
-def load(request):
-    message = 'Служебный метод'
-    # message += load_csv()
-    # message += create_cars()
-    return HttpResponse(message)

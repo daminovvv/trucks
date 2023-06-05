@@ -1,13 +1,13 @@
 from rest_framework import serializers
 
-from trucksapp.models import Cargo, Car, Location
+from trucksapp.models import Car, Cargo, Location
 from trucksapp.utils.distance_calc import calculate_distance
 
 
 class CarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CarPatchSerializer(serializers.ModelSerializer):
@@ -15,11 +15,13 @@ class CarPatchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Car
-        fields = ['id', 'number', 'capacity', 'current_location']
+        fields = ["id", "number", "capacity", "current_location"]
 
     def create(self, validated_data):
         car_dict = validated_data
-        car_dict['current_location'] = Location.objects.get(current_location=validated_data['current_location'])
+        car_dict["current_location"] = Location.objects.get(
+            current_location=validated_data["current_location"]
+        )
         car = Car.objects.create(**validated_data)
         return car
 
@@ -30,12 +32,16 @@ class CargoPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cargo
-        fields = ['pickup', 'delivery', 'weight', 'description']
+        fields = ["pickup", "delivery", "weight", "description"]
 
     def create(self, validated_data):
         cargo_dict = validated_data
-        cargo_dict['pickup'] = Location.objects.get(postcode=validated_data['pickup'])
-        cargo_dict['delivery'] = Location.objects.get(postcode=validated_data['delivery'])
+        cargo_dict["pickup"] = Location.objects.get(
+            postcode=validated_data["pickup"]
+        )
+        cargo_dict["delivery"] = Location.objects.get(
+            postcode=validated_data["delivery"]
+        )
         cargo = Cargo.objects.create(**validated_data)
         return cargo
 
@@ -45,10 +51,14 @@ class CarChildSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Car
-        fields = ['id', 'number', 'capacity', 'current_location', 'distance_miles']
+        fields = ["id",
+                  "number",
+                  "capacity",
+                  "current_location",
+                  "distance_miles"]
 
     def get_distance_miles(self, instance):
-        cargo_loc = self.context.get('cargo_loc')
+        cargo_loc = self.context.get("cargo_loc")
         return calculate_distance(instance, cargo_loc)
 
 
@@ -57,20 +67,20 @@ class CargoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cargo
-        fields = ['id', 'pickup', 'delivery', 'weight', 'nearby_cars']
+        fields = ["id", "pickup", "delivery", "weight", "nearby_cars"]
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         cargo_loc = instance.pickup_id
-        nearby_cars = Car.objects.all().prefetch_related('current_location')
-        if self.context['view'].action == 'list':
+        nearby_cars = Car.objects.all().prefetch_related("current_location")
+        if self.context["view"].action == "list":
             for car in nearby_cars:
                 car.distance_miles = calculate_distance(car, cargo_loc)
-            nearby_cars = [car for car in nearby_cars if car.distance_miles < 1000]
-        representation['nearby_cars'] = CarChildSerializer(
-            nearby_cars,
-            many=True,
-            context={'cargo_loc': cargo_loc}
+            nearby_cars = [
+                car for car in nearby_cars if car.distance_miles < 1000
+            ]
+        representation["nearby_cars"] = CarChildSerializer(
+            nearby_cars, many=True, context={"cargo_loc": cargo_loc}
         ).data
         return representation
 
@@ -81,7 +91,7 @@ class CargoPatchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cargo
-        fields = ['pickup_id', 'delivery_id', 'weight', 'description']
+        fields = ["pickup_id", "delivery_id", "weight", "description"]
 
     def get_pickup_id(self, instance):
         return instance.pickup_id

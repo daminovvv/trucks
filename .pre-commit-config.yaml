@@ -1,8 +1,19 @@
+exclude: |
+            (?x)^(
+                trucks/settings.py
+            )$
 repos:
 -   repo: https://github.com/psf/black
     rev: 23.1.0
     hooks:
       - id: black
+        exclude: |
+            (?x)^(
+                trucksapp/views.py|
+                trucksapp/serializers.py|
+                trucksapp/services.py|
+                trucksapp/utils/distance_calc.py
+            )$
 
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
@@ -25,9 +36,11 @@ repos:
     rev: 3.9.2
     hooks:
     -   id: flake8
+        exclude: "trucksapp/models/__init__.py"
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.0.0
     hooks:
     -   id: mypy
         additional_dependencies: ['types-requests', 'types-pytz']
+        exclude: "trucksapp/migrations/"
