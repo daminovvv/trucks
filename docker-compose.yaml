@@ -16,8 +16,9 @@ services:
       - network
 
   web:
-    build: .
-    command: ./django.sh
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - .:/code
     ports:
@@ -30,6 +31,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
+    command: /code/django.sh
     depends_on:
       - db
 
